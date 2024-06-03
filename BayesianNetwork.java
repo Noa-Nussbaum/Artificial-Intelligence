@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 
@@ -9,6 +10,11 @@ public class BayesianNetwork {
     public Hashtable getNodesList(){
         return this.nodesList;
     }
+
+    public AlgNode getNode(String name){
+        return (AlgNode) this.nodesList.get(name);
+    }
+
     
     // Constructor
     public BayesianNetwork(){
@@ -23,12 +29,16 @@ public class BayesianNetwork {
     // Print function
     @SuppressWarnings("unchecked")
     public void print(){
-
-
         nodesList.forEach((name, node) -> {
             System.out.println(node.toString());
         }
         );
+    }
+
+    public String BayesBall(String source, String destination, ArrayList<String> evidenceList){
+        
+
+        return "no";
     }
 
     }

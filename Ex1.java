@@ -24,9 +24,13 @@ public class Ex1 {
         
         // Retrieve XML file name from first row of input file
         String XMLFile = scanFile.nextLine();
-        System.out.println(XMLFile);
         BayesianNetwork network = XMLReaderUtil.XMLReader(XMLFile);
         network.print();
+        
+        // Retrieve queries and write results into output file
+        QueryReadWrite queryReadWrite = new QueryReadWrite();
+        queryReadWrite.readAndWrite(scanFile, network, "outputFile");
+        scanFile.close();
 
     }
 }
