@@ -20,14 +20,13 @@ public class Ex1 {
     }
 
 
-
-
     public static void main(String[] args) throws IOException{
         
         // Retrieve XML file name from first row of input file
         String XMLFile = scanFile.nextLine();
         System.out.println(XMLFile);
-        // BayesianNetwork net = BayesianNetwork.XMLReader(XMLFile);
+        BayesianNetwork network = BayesianNetwork.XMLReader(XMLFile);
+        network.print();
 
     }
 }
