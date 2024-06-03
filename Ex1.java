@@ -25,7 +25,7 @@ public class Ex1 {
         // Retrieve XML file name from first row of input file
         String XMLFile = scanFile.nextLine();
         System.out.println(XMLFile);
-        BayesianNetwork network = BayesianNetwork.XMLReader(XMLFile);
+        BayesianNetwork network = XMLReaderUtil.XMLReader(XMLFile);
         network.print();
 
     }
