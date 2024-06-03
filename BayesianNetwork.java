@@ -72,13 +72,11 @@ public class BayesianNetwork {
                 if (definitionNode.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
                     org.w3c.dom.Element definitionElement = (org.w3c.dom.Element) definitionNode;
                     String nodeName = definitionElement.getElementsByTagName("FOR").item(0).getTextContent();
-                    System.err.println(nodeName);
                     Node currentNode = (Node) network.nodesList.get(nodeName);
                     org.w3c.dom.NodeList givenList = definitionElement.getElementsByTagName("GIVEN");
 
                     for (int j = 0; j < givenList.getLength(); j++) {
                         String parentName = givenList.item(j).getTextContent();
-                        System.err.println(parentName);
                         Node parentNode = (Node) network.nodesList.get(parentName);
                         currentNode.setParent(parentNode);
                         parentNode.setChild(currentNode);
