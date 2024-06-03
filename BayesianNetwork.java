@@ -28,11 +28,11 @@ public class BayesianNetwork {
 
     // Constructor
     public BayesianNetwork(){
-        this.nodesList = new Hashtable<String, Node>();
+        this.nodesList = new Hashtable<String, AlgNode>();
     }
 
     // Node setter
-    public void setNode(String name, Node node){
+    public void setNode(String name, AlgNode node){
         this.nodesList.put(name, node);
     }
 
@@ -60,7 +60,7 @@ public class BayesianNetwork {
                     for (int j = 0; j < outcomes.getLength(); j++) {
                         values.add(outcomes.item(j).getTextContent());
                     }
-                    Node newNode = new Node(nodeName, values);
+                    AlgNode newNode = new AlgNode(nodeName, values);
                     network.setNode(nodeName, newNode);
                 }
             }
@@ -72,12 +72,12 @@ public class BayesianNetwork {
                 if (definitionNode.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
                     org.w3c.dom.Element definitionElement = (org.w3c.dom.Element) definitionNode;
                     String nodeName = definitionElement.getElementsByTagName("FOR").item(0).getTextContent();
-                    Node currentNode = (Node) network.nodesList.get(nodeName);
+                    AlgNode currentNode = (AlgNode) network.nodesList.get(nodeName);
                     org.w3c.dom.NodeList givenList = definitionElement.getElementsByTagName("GIVEN");
 
                     for (int j = 0; j < givenList.getLength(); j++) {
                         String parentName = givenList.item(j).getTextContent();
-                        Node parentNode = (Node) network.nodesList.get(parentName);
+                        AlgNode parentNode = (AlgNode) network.nodesList.get(parentName);
                         currentNode.setParent(parentNode);
                         parentNode.setChild(currentNode);
                     }

@@ -1,11 +1,11 @@
 import java.util.ArrayList;
 
-public class Node {
+public class AlgNode {
     
     public static final Object ELEMENT_NODE = null;
     // Each Node has children and parents and a correlating factor
-    private ArrayList<Node> children;
-    private ArrayList<Node> parents;
+    private ArrayList<AlgNode> children;
+    private ArrayList<AlgNode> parents;
     private NodeFactor factor;
     private String name;
     private ArrayList<String> values;
@@ -14,11 +14,11 @@ public class Node {
 
 
     // Getters
-    public ArrayList<Node> getChildren(){
+    public ArrayList<AlgNode> getChildren(){
         return this.children;
     }
 
-    public ArrayList<Node> getParents(){
+    public ArrayList<AlgNode> getParents(){
         return this.parents;
     }
 
@@ -39,11 +39,11 @@ public class Node {
 
 
     // Setters
-    public void setChild(Node child){
+    public void setChild(AlgNode child){
         this.children.add(child);
     }
 
-    public void setParent(Node parent){
+    public void setParent(AlgNode parent){
         this.parents.add(parent);
     }
 
@@ -59,13 +59,13 @@ public class Node {
     }
 
     // Constructors 
-    public Node(){
+    public AlgNode(){
         this.children = new ArrayList<>();
         this.parents = new ArrayList<>();
         this.values = new ArrayList<>();
     }
 
-    public Node(String name, ArrayList<String> values){
+    public AlgNode(String name, ArrayList<String> values){
         this.children = new ArrayList<>();
         this.parents = new ArrayList<>();
         this.name = name;
