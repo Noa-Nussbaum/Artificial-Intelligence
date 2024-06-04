@@ -21,7 +21,7 @@ Represents a node in the Bayesian Network with the following attributes:
 Manages the Conditional Probability Table (CPT) for a node, encapsulating the probabilistic logic specific to that node.
 
 #### `BayesianNetwork`
-Holds and manages the entire network comprising various `AlgNode` instances. It serves as the backbone of the application, linking all nodes together.
+Holds and manages the entire network comprising various `AlgNode` instances. It serves as the backbone of the application, linking all nodes together. Contains the Bayes Ball function.
 
 #### `XMLReaderUtil`
 Responsible for parsing XML files to construct the Bayesian Network, ensuring each node is properly initialized with its respective data.

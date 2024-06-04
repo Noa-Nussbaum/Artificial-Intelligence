@@ -9,6 +9,7 @@ public class AlgNode {
     private NodeFactor factor;
     private String name;
     private ArrayList<String> values;
+    private boolean shaded;
 
 
 
@@ -25,7 +26,9 @@ public class AlgNode {
     public NodeFactor getFactor(){
         return this.factor;
     }
-
+    public boolean isShaded(){
+        return this.shaded;
+    }
 // Necessary?
     public String getName(){
         return this.name;
@@ -57,12 +60,16 @@ public class AlgNode {
     public void setValues(String value){
         this.values.add(value);
     }
+    public void setShaded(boolean shading){
+        this.shaded = shading;
+    }
 
     // Constructors 
     public AlgNode(){
         this.children = new ArrayList<>();
         this.parents = new ArrayList<>();
         this.values = new ArrayList<>();
+        this.shaded = false;
     }
 
     public AlgNode(String name, ArrayList<String> values){
@@ -70,6 +77,7 @@ public class AlgNode {
         this.parents = new ArrayList<>();
         this.name = name;
         this.values = values;
+        this.shaded = false;
     }
 
 

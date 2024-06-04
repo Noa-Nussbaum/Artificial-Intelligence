@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Scanner;
 
 public class QueryReadWrite {
@@ -15,7 +16,6 @@ public class QueryReadWrite {
             String line = scanFile.nextLine();
             if(line.startsWith("P")){
                 results.add(processVariableEliminationQuery(line, network));
-                System.out.println("p");
             }
             else {  // Remaining lines for Variable Elimination
                 results.add(processBayesBallQuery(line, network));
@@ -36,10 +36,13 @@ public class QueryReadWrite {
             }
         }
 
+
+        // BayesianNetwork bn, String strSrc, String strDest, ArrayList<String> evidence, String strLast, HashSet<String> passed
+        ArrayList<AlgNode> passed = new ArrayList<>();
         // Assume a method in BayesianNetwork: boolean areIndependent(String node1, String node2, List<String> evidence)
-        // boolean independent = network.areIndependent(nodes[0], nodes[1], evidence);
-        // return independent ? "yes" : "no";
-        return "yes";
+        boolean independent = network.BayesBall(network, nodes[0], nodes[1], evidence, "", passed);
+        return independent ? "yes" : "no";
+        // return "yes";
     }
 
     private String processVariableEliminationQuery(String query, BayesianNetwork network) {
