@@ -1,85 +1,84 @@
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.Arrays;
 
-// import javafx.util.Pair;
 
 public class NodeFactor {
 
     // Create array list of probabililities
-    private ArrayList<Double> probs;
+    private ArrayList<Double> probs; 
 
-    // Create array list of indexes
-    private ArrayList<String> place;
+    // Create array list of values the factor has
+    private ArrayList<String> vals; // -> 'indexes'
 
-    // Create hashmap of variables
-    private ArrayList<AlgNode> vars;
+    // Create arraylist of nodes
+    private ArrayList<AlgNode> vars; 
 
 
     // Constructors
     public NodeFactor(){
         this.probs = new ArrayList<Double>();
-        this.place = new ArrayList<String>();
+        this.vals = new ArrayList<String>();
         this.vars = new ArrayList<AlgNode>();
     }
 
     public NodeFactor(ArrayList<Double> probabilities, ArrayList<AlgNode> variables){
         this.probs = probabilities;
-        this.place = new ArrayList<String>();
+        this.vals = new ArrayList<String>();
         this.vars = variables;
+        for(AlgNode node : variables){
+            for(String value : node.getValues()){
+                vals.add(value);
+            }
+        }
+        set_probsIndexes();
     }
+// this method initialize the indexes (values of vars) in each row in the factor.
+    private void set_probsIndexes() {
+        String[] probIndexes = new String[this.probs.size()];
+        String[] values = vars.get(vars.size()-1).getValues().toArray(new String[0]);
+       
+        
+        int value_index = 0;
+        for (int i = 0; i<probIndexes.length; i++){
+            probIndexes[i] = values[value_index];
+            value_index = (value_index+1) % values.length;
+        }
 
-    public NodeFactor(ArrayList<Double> probabilities, ArrayList<AlgNode> variables, ArrayList<String> places){
-        this.probs = probabilities;
-        this.place = places;
-        this.vars = variables;
+        if(this.vars.size() > 1){
+            int var_index = this.vars.size()-2;
+            while( var_index >= 0){
+                String first_str = probIndexes[0];
+                values = vars.get(var_index).getValues().toArray(new String[0]);
+                value_index = 0;
+                for (int i = 0; i<probIndexes.length; i++){
+                    if(probIndexes[i].equals(first_str)){
+                        probIndexes[i] = values[value_index] + "," + probIndexes[i];
+                        value_index = (value_index+1) % values.length;
+                    }
+                    else{
+                        int previous_value_index = (value_index-1)%values.length;
+                        if (previous_value_index<0) { previous_value_index+=values.length; }
+                        probIndexes[i] = values[previous_value_index] + "," + probIndexes[i];
+                    }
+                }
+                var_index--;
+            }
+        }
+
+        this.vals = new ArrayList<>(Arrays.asList(probIndexes));
     }
-
-
-    // Setters
-    // Add new values
-    // public void setVariable(String name, ArrayList<String> vals){
-
-    // }
-
-    @Override
+@Override
 public String toString() {
-    StringBuilder builder = new StringBuilder();
-    
-    // Adding a header for better readability
-    // builder.append(String.format("%-10s %-30s %-40s\n", "Variable", "Values", "Probabilities"));
-    builder.append("\n-----------------------------------------------------------------------------------\n");
+    String build = "Variables=\n";
+    for (AlgNode node : vars){
+        build += node.getName() + " " + node.getValues() + "\n";
+    } 
+    build += "\n" + "Value Probability\n";
+    for(int i=0; i<probs.size(); i++)
+    build +=  vals.get(i).toString() +" | " + probs.get(i) + "\n";
 
-    // Loop through each variable and print its corresponding values and probabilities
-    for (AlgNode var : vars) {
-        // Retrieve the variable's name
-        String varName = var.getName();
-        
-        // Format values into a cleaner, comma-separated string without brackets
-        String valuesFormatted = var.getValues().toString().replaceAll("\\[|\\]", "");
-        
-        builder.append(varName+ " [" + valuesFormatted + "]\n");
-
-    }
-
-    // Prepare to append probabilities associated with this variable
-    StringBuilder probBuilder = new StringBuilder();
-    for (Double p : probs) {  // Assuming `getProbabilities()` method exists in AlgNode
-    // probBuilder.append(String.format("%.2f, ", p));
-    probBuilder.append(p + ", ");
-    }
-    // Remove the trailing comma and space
-    if (probBuilder.length() > 0) {
-        probBuilder.setLength(probBuilder.length() - 2);
-    }
-
-    // builder.append(String.format("%-40s\n","[" + probBuilder.toString() + "]"));
-    builder.append("[" + probBuilder.toString() + "]");
-
-    return builder.toString();
+    return build;
 }
-
 
     
 }
