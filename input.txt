@@ -1,5 +1,6 @@
 alarm_net.xml
-A-J|M=T
+B-J|A=T
+E-J|A=F
 P(B=T|J=T,M=T) A-E
 P(B=T|J=T,M=T) E-A
 P(J=T|B=T) A-E-M

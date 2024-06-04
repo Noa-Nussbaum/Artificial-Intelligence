@@ -51,35 +51,30 @@ public class BayesianNetwork {
 
 // If no path to the destination is active, return true (independent)
 
-public static boolean BayesBall(BayesianNetwork network, String StrSrc, String StrDest, ArrayList<String> evidence, String StrLast, ArrayList<AlgNode> passed) {
-    AlgNode src = network.getNode(StrSrc);
-    AlgNode dest = network.getNode(StrDest);
-    AlgNode last = network.getNode(StrLast);
+public static boolean BayesBall(BayesianNetwork network, String src, String destin, ArrayList<String> evidence, String prev, ArrayList<AlgNode> passed) {
+    // Retrieve source, destination, and previous nodes
+    AlgNode source = network.getNode(src);
+    AlgNode destination = network.getNode(destin);
+    AlgNode previous = network.getNode(prev);
 
     // If the source is the destination or the nodes don't exist
-    if (network.getNode(src.getName()).equals(network.getNode(dest.getName()))) return false;
-    if (src == null || dest == null) return true; 
+    if (network.getNode(source.getName()).equals(network.getNode(destination.getName()))) return false;
+    if (source == null || destination == null) return true; 
 
 
     //If the source is in the evidence
-    if (evidence.contains(src.getName())) {
-        System.out.println("contains " + src.getName());
+    if (evidence.contains(source.getName())) {
         // If it came from child
-        if (src.getChildren().contains(last)) {
+        if (source.getChildren().contains(previous)) {
             return true;
         }
 
         //If it came from a parent
         else {
-            for (int i = 0; i < src.getParents().size(); i++) {
-                /*
-                    In order to prevent endless loop between the nodes, we will keep the nodes we can't
-                    come back to in a memory.
-                    Only if this is the first time we get to this node - go in, else move on
-                 */
-                if (!passed.contains(src.getParents().get(i))) {
-                    passed.add(src);
-                    if (!BayesBall(network, src.getParents().get(i).getName(), dest.getName(), evidence, src.getName(), passed))
+            for (int i = 0; i < source.getParents().size(); i++) {
+                if (!passed.contains(source.getParents().get(i))) {
+                    passed.add(source);
+                    if (!BayesBall(network, source.getParents().get(i).getName(), destination.getName(), evidence, source.getName(), passed))
                         return false;
                 }
             }
@@ -90,18 +85,18 @@ public static boolean BayesBall(BayesianNetwork network, String StrSrc, String S
     //If the source is not in the evidence
     else {
         //If it came from a child
-        if (src.getChildren().contains(last) || last == (null)) {
-            for (int i = 0; i < src.getParents().size(); i++) {
-                if (!passed.contains(src.getParents().get(i))) {
-                    passed.add(src);
-                    if (!BayesBall(network, src.getParents().get(i).getName(), dest.getName(), evidence, src.getName(), passed))
+        if (source.getChildren().contains(previous) || previous == (null)) {
+            for (int i = 0; i < source.getParents().size(); i++) {
+                if (!passed.contains(source.getParents().get(i))) {
+                    passed.add(source);
+                    if (!BayesBall(network, source.getParents().get(i).getName(), destination.getName(), evidence, source.getName(), passed))
                         return false;
                 }
             }
-            for (int i = 0; i < src.getChildren().size(); i++) {
-                if (!passed.contains(src.getChildren().get(i))) {
-                    passed.add(src);
-                    if (!BayesBall(network, src.getChildren().get(i).getName(), dest.getName(), evidence, src.getName(), passed))
+            for (int i = 0; i < source.getChildren().size(); i++) {
+                if (!passed.contains(source.getChildren().get(i))) {
+                    passed.add(source);
+                    if (!BayesBall(network, source.getChildren().get(i).getName(), destination.getName(), evidence, source.getName(), passed))
                         return false;
                 }
             }
@@ -110,9 +105,9 @@ public static boolean BayesBall(BayesianNetwork network, String StrSrc, String S
 
         //If it came from a parent
         else {
-            for (int i = 0; i < src.getChildren().size(); i++) {
-                if (!passed.contains(src.getChildren().get(i))) {
-                    if (!BayesBall(network, src.getChildren().get(i).getName(), dest.getName(), evidence, src.getName(), passed)){
+            for (int i = 0; i < source.getChildren().size(); i++) {
+                if (!passed.contains(source.getChildren().get(i))) {
+                    if (!BayesBall(network, source.getChildren().get(i).getName(), destination.getName(), evidence, source.getName(), passed)){
                         return false;
                     }
                 }

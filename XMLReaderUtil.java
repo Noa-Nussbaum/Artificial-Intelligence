@@ -3,6 +3,8 @@ import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.w3c.dom.Node;
+
 
 public class XMLReaderUtil {
 
@@ -54,7 +56,21 @@ public class XMLReaderUtil {
                     }
 
                     String table = definitionElement.getElementsByTagName("TABLE").item(0).getTextContent();
-                    // Further processing for the factor can be done here
+                    ArrayList<Double> probabilities = new ArrayList<>();
+                    String[] parts = table.split(" ");
+                    for(String m : parts){
+                        probabilities.add(Double.parseDouble(m));
+                    }
+                    // Add all relevant nodes to the factor
+                    ArrayList<AlgNode> nodes = new ArrayList<AlgNode>();
+                    for(int j=0; j<currentNode.getParents().size(); j++){
+                        nodes.add(currentNode.getParents().get(j));
+                    }
+                    nodes.add(currentNode);
+                    // Initialize factor
+                    NodeFactor factor = new NodeFactor(probabilities, nodes);
+                    currentNode.setFactor(factor);
+                    
                 }
             }
         } catch (Exception e) {
