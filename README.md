@@ -19,6 +19,11 @@ Represents a node in the Bayesian Network with the following attributes:
 
 #### `NodeFactor`
 Manages the Conditional Probability Table (CPT) for a node, encapsulating the probabilistic logic specific to that node.
+- **Probabilities**:
+- **Nodes**:
+- **List of variables**: variable objects arrayList
+- **Optional variable values**: such as True or False
+getVars function returns the list of variable names
 
 #### `BayesianNetwork`
 Holds and manages the entire network comprising various `AlgNode` instances. It serves as the backbone of the application, linking all nodes together. Contains the Bayes Ball function.
@@ -28,6 +33,9 @@ Responsible for parsing XML files to construct the Bayesian Network, ensuring ea
 
 #### `QueryReadWrite`
 Processes the input file to extract queries and writes the computed results to the output file. This component bridges user inputs and algorithmic outputs.
+
+#### `NodeVariable`
+Holds the name and possible values (like True or False) that the variable has.
 
 ### Setup and Usage
 To run this project, ensure you have the following setup:

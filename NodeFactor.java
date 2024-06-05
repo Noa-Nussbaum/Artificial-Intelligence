@@ -8,79 +8,156 @@ public class NodeFactor {
     private ArrayList<Double> probs; 
 
     // Create array list of values the factor has
-    private ArrayList<String> vals; // -> 'indexes'
+    private ArrayList<String> variableValues; // -> 'indexes'
 
     // Create arraylist of nodes
-    private ArrayList<AlgNode> vars; 
+    private ArrayList<AlgNode> nodes; 
 
+    // Create list of variables and their possible values
+    private static ArrayList<NodeVariable> factorVariables;
+
+    // Getters
+    public ArrayList<AlgNode> getNodes(){
+        return this.nodes;
+    }
+
+    // Returns arrayList of variables
+    public ArrayList<NodeVariable> getVariablesObjects(){
+        return this.factorVariables;
+    }
 
     // Constructors
     public NodeFactor(){
         this.probs = new ArrayList<Double>();
-        this.vals = new ArrayList<String>();
-        this.vars = new ArrayList<AlgNode>();
+        this.variableValues = new ArrayList<String>();
+        this.nodes = new ArrayList<AlgNode>();
+        this.factorVariables = new ArrayList<NodeVariable>();
     }
 
-    public NodeFactor(ArrayList<Double> probabilities, ArrayList<AlgNode> variables){
-        this.probs = probabilities;
-        
-
-        this.vals = new ArrayList<String>();
-        this.vars = variables;
-        for(AlgNode node : variables){
+    public NodeFactor(ArrayList<Double> probabilities, ArrayList<AlgNode> nodes){
+        this.nodes = nodes;
+        this.factorVariables = new ArrayList<NodeVariable>();
+        this.variableValues = new ArrayList<String>();
+        for(AlgNode node : nodes){
+            NodeVariable newVar = new NodeVariable();
+            newVar.setName(node.getName());
+            newVar.setValues(node.getValues());
+            factorVariables.add(newVar);
             for(String value : node.getValues()){
-                vals.add(value);
+                variableValues.add(value);
             }
         }
-        set_probsIndexes();
+        this.probs = probabilities;
+        // Arrange the rows
+        valuePerProb();
+        
     }
-// this method initialize the indexes (values of vars) in each row in the factor.
-    private void set_probsIndexes() {
-        String[] probIndexes = new String[this.probs.size()];
-        String[] values = vars.get(vars.size()-1).getValues().toArray(new String[0]);
+
+    // Set the rows and their values in the factor
+    private void valuePerProb() {
+        // Initialize values and probabilities
+        String[] rowNames = new String[this.probs.size()];
+        String[] values = nodes.get(nodes.size()-1).getValues().toArray(new String[0]);
        
         
         int value_index = 0;
-        for (int i = 0; i<probIndexes.length; i++){
-            probIndexes[i] = values[value_index];
+        for (int i = 0; i<rowNames.length; i++){
+            rowNames[i] = values[value_index];
             value_index = (value_index+1) % values.length;
         }
 
-        if(this.vars.size() > 1){
-            int var_index = this.vars.size()-2;
+        if(this.nodes.size() > 1){
+            int var_index = this.nodes.size()-2;
             while( var_index >= 0){
-                String first_str = probIndexes[0];
-                values = vars.get(var_index).getValues().toArray(new String[0]);
+                String first_str = rowNames[0];
+                values = nodes.get(var_index).getValues().toArray(new String[0]);
                 value_index = 0;
-                for (int i = 0; i<probIndexes.length; i++){
-                    if(probIndexes[i].equals(first_str)){
-                        probIndexes[i] = values[value_index] + "," + probIndexes[i];
+                for (int i = 0; i<rowNames.length; i++){
+                    if(rowNames[i].equals(first_str)){
+                        rowNames[i] = values[value_index] + "," + rowNames[i];
                         value_index = (value_index+1) % values.length;
                     }
                     else{
                         int previous_value_index = (value_index-1)%values.length;
                         if (previous_value_index<0) { previous_value_index+=values.length; }
-                        probIndexes[i] = values[previous_value_index] + "," + probIndexes[i];
+                        rowNames[i] = values[previous_value_index] + "," + rowNames[i];
                     }
                 }
                 var_index--;
             }
         }
 
-        this.vals = new ArrayList<>(Arrays.asList(probIndexes));
+        this.variableValues = new ArrayList<>(Arrays.asList(rowNames));
     }
-@Override
-public String toString() {
-    String build = "Variables=\n";
-    for (AlgNode node : vars){
-        build += node.getName() + " " + node.getValues() + "\n";
-    } 
-    build += "\n" + "Value Probability\n";
-    for(int i=0; i<probs.size(); i++)
-    build +=  vals.get(i).toString() +" | " + probs.get(i) + "\n";
 
-    return build;
-}
+    // Factor print function
+    @Override
+    public String toString() {
+        String build = "Variables=\n";
+        for (AlgNode node : nodes){
+            build += node.getName() + " " + node.getValues() + "\n";
+        } 
+        build += "\n" + "Value Probability\n";
+        for (AlgNode node : nodes){
+            build += node.getName() + " ";
+        } 
+        build +="\n";
+        for(int i=0; i<probs.size(); i++)
+        build +=  variableValues.get(i).toString() +" | " + probs.get(i) + "\n";
+
+        return build;
+    }
+
+    // Checks if the given variable name is in this factor's variables
+    public boolean isVarInVars(String name){
+        for(int i = 0; i< this.getVars().length; i++){
+            if(name.equals(this.getVars()[i])){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Returns array of variables that this factor has
+    public String[] getVars(){
+        String[] answer = new String[this.nodes.size()];
+        for(int i = 0; i< this.nodes.size(); i++){
+            answer[i] = this.nodes.get(i).getName();
+        }
+        
+        return answer;
+    }
+
+    // Here we restrict the factors to only contain the variables with the values given in the evidence
+    public static ArrayList<NodeFactor> restrict(ArrayList<NodeFactor> factors, String[] evidence, String[] evidenceValues){
+        ArrayList<NodeFactor> answer = new ArrayList<NodeFactor>();
+
+        // System.out.println(factors.get(0).getVariables().get(0).getName());
+        // We need to iterate through each factor -> each evidence
+        // If the factor contains the relevant evidence variable in vars -> then remove the rows and values that we don't need
+        // Add to answer
+        // Let's iterate through all the factors and only add to answer those which do not contain evidence
+
+        for(int i=0; i<factors.size(); i++){
+            for(String evi : evidence){
+                if(factors.get(i).isVarInVars(evi)){
+                    System.out.println("Noa");
+
+
+                    
+                    
+                }
+            }
+        }
+        
+
+
+
+
+
+
+        return answer;
+    }
 
     
 }
