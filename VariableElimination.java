@@ -13,7 +13,7 @@ public class VariableElimination {
 
     }
 
-    public String runAlgo(){
+    public String run(){
         return answer = "Nisht";
     }
 }

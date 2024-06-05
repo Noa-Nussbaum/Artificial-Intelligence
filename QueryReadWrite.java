@@ -48,42 +48,40 @@ public class QueryReadWrite {
     private String processVariableEliminationQuery(String query, BayesianNetwork network) {
         
         // Get the query variable, it's value
-        String[] fullQuery = query.split("");
-        String queryVariable = fullQuery[2];
-        String wantedValue = fullQuery[4];
+        String queryVariable = query.substring(2).split("=")[0];
+
+        String wantedValue = query.substring(3+queryVariable.length()).split("\\|")[0];
     
-        // Get evidence, their values
+        // Get evidence
         int numEvidence = query.length() - query.replace("=", "").length();
-
-        String[] evidence = new String[numEvidence-1];
-        int placeEvidence = 0;
-        for(int i = fullQuery.length-1; i>=5; i--){
-            if(fullQuery[i].equals("=")){
-                evidence[placeEvidence] = fullQuery[i-1];
-                placeEvidence++;
-            }
+        String[] evidence = new String[numEvidence];
+        String[] evi = query.split("\\|")[1].split("\\)")[0].split(",");
+        for (int i = 0; i < evi.length; i++) {
+            evidence[i] = evi[i].split("=")[0];
+            System.out.println(evidence[i]);
         }
-
+        // Get evidence values
         String[] evidenceValues = new String[numEvidence-1];
-        int placeEvidenceValues = 0;
-        for(int i = fullQuery.length-1; i>=5; i--){
-            if(fullQuery[i].equals("=")){
-                evidenceValues[placeEvidenceValues] = fullQuery[i+1];
-                placeEvidenceValues++;
-            }
+        String[] e = query.split("\\|")[1].split("\\)")[0].split(",");
+        for (int i = 0; i < e.length; i++) {
+            evidenceValues[i] = e[i].split("=")[1];
         }
 
+
+        // Get the hidden variables
+        // P(J=T|B=T) A-E-M
         ArrayList<String> hiddenVariables = new ArrayList<>();
         String[] division = query.split(" ");
         if(division.length>1){
             String[] allHiddens = division[1].split("-");
             for(String s : allHiddens){
                 hiddenVariables.add(s);
+                System.out.println(s);
             }
         }
 
         VariableElimination varElim = new VariableElimination(queryVariable, wantedValue, network,evidence, evidenceValues, hiddenVariables);
-        String varAnswer = varElim.runAlgo();
+        String varAnswer = varElim.run();
         // System.out.println(varAnswer);
 
         return "0.28417,7,16";  // Placeholder result

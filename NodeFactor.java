@@ -23,6 +23,8 @@ public class NodeFactor {
 
     public NodeFactor(ArrayList<Double> probabilities, ArrayList<AlgNode> variables){
         this.probs = probabilities;
+        
+
         this.vals = new ArrayList<String>();
         this.vars = variables;
         for(AlgNode node : variables){
