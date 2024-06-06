@@ -37,6 +37,11 @@ Processes the input file to extract queries and writes the computed results to t
 #### `NodeVariable`
 Holds the name and possible values (like True or False) that the variable has.
 
+#### `VariableElimination`
+Runs the variable elimination algorithm. 
+- **easyToAnswer**: checks if any of the factors contains the final answer
+
+
 ### Setup and Usage
 To run this project, ensure you have the following setup:
 - Java JDK 8 or newer installed and properly set up.
