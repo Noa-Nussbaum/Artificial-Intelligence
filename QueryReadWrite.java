@@ -56,14 +56,18 @@ public class QueryReadWrite {
         int numEvidence = query.length() - query.replace("=", "").length();
         String[] evidence = new String[numEvidence-1];
         String[] evi = query.split("\\|")[1].split("\\)")[0].split(",");
+        String[] evidenceValues = new String[numEvidence-1];
+
+        if((evi != null || evi.length > 0) && evi[0].contains("=")){
         for (int i = 0; i < evi.length; i++) {
             evidence[i] = evi[i].split("=")[0];
         }
         // Get evidence values
-        String[] evidenceValues = new String[numEvidence-1];
+        
         String[] e = query.split("\\|")[1].split("\\)")[0].split(",");
         for (int i = 0; i < e.length; i++) {
             evidenceValues[i] = e[i].split("=")[1];
+        }
         }
 
 

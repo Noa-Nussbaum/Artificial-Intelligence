@@ -26,7 +26,7 @@ Manages the Conditional Probability Table (CPT) for a node, encapsulating the pr
 getVars function returns the list of variable names
 
 #### `BayesianNetwork`
-Holds and manages the entire network comprising various `AlgNode` instances. It serves as the backbone of the application, linking all nodes together. Contains the Bayes Ball function.
+Holds and manages the entire network comprising various `AlgNode` instances. It serves as the backbone of the application, linking all nodes together. Contains the Bayes Ball function. Also has list of node names for comfort. Function to check if variable is an ancestor of given list of variables.
 
 #### `XMLReaderUtil`
 Responsible for parsing XML files to construct the Bayesian Network, ensuring each node is properly initialized with its respective data.

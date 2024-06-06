@@ -1,15 +1,23 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.Queue;
 
 
 public class BayesianNetwork {
 
     private Hashtable nodesList;
+    private ArrayList<String> nodesNames;
 
     // Getters
     public Hashtable getNodesList(){
         return this.nodesList;
     }
+    public ArrayList<String> getNodeNames(){
+        return this.nodesNames;
+    }
+
 
     public AlgNode getNode(String name){
         return (AlgNode) this.nodesList.get(name);
@@ -19,11 +27,13 @@ public class BayesianNetwork {
     // Constructor
     public BayesianNetwork(){
         this.nodesList = new Hashtable<String, AlgNode>();
+        this.nodesNames = new ArrayList<String>();
     }
 
     // Node setter
     public void setNode(String name, AlgNode node){
         this.nodesList.put(name, node);
+        this.nodesNames.add(name);
     }
 
     // Print function
@@ -112,5 +122,35 @@ public static boolean BayesBall(BayesianNetwork network, String src, String dest
     }
 
 }
+
+
+    public boolean ancestor(String[] evidence, String varName, String query){
+        // Is name the ancestor of query or any of the evidence?
+
+        Queue<AlgNode> nextNodes = new LinkedList<>();
+        AlgNode firstNode = (AlgNode) this.getNode(varName);
+        nextNodes.add(firstNode);
+
+        while (!nextNodes.isEmpty()){
+
+            AlgNode curr_node = nextNodes.remove();
+            String name = curr_node.getName();
+            ArrayList<String> evidenceVars=new ArrayList<>();
+
+            if(evidence != null) {
+                evidenceVars = new ArrayList<>(Arrays.asList(evidence));
+            }
+
+            // Check if the node is in the evidence or if it's the query
+            if(name.equals(query) || evidenceVars.contains(name)){
+                return true;
+            }
+
+            else if(!curr_node.getChildren().isEmpty()){
+                for(AlgNode kid: curr_node.getChildren()){nextNodes.add(kid);}
+            }
+        }
+        return false;
+    }
 
 }

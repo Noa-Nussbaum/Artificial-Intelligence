@@ -50,7 +50,6 @@ public class NodeFactor {
         this.probs = probabilities;
         // Arrange the rows
         valuePerProb();
-        
     }
 
     // Set the rows and their values in the factor
@@ -132,27 +131,27 @@ public class NodeFactor {
     public static ArrayList<NodeFactor> restrict(ArrayList<NodeFactor> factors, String[] evidence, String[] evidenceValues){
         ArrayList<NodeFactor> answer = new ArrayList<NodeFactor>();
 
-        // System.out.println(factors.get(0).getVariables().get(0).getName());
         // We need to iterate through each factor -> each evidence
         // If the factor contains the relevant evidence variable in vars -> then remove the rows and values that we don't need
         // Add to answer
         // Let's iterate through all the factors and only add to answer those which do not contain evidence
 
+        // for every factor
         for(int i=0; i<factors.size(); i++){
-            for(String evi : evidence){
-                if(factors.get(i).isVarInVars(evi)){
-                    System.out.println("Noa");
-
+            // System.out.println(factors.get(i).variableValues.get(0));
+            // for every evidence
+            for(int m=0; m<evidence.length; m++){
+                if(factors.get(i).isVarInVars(evidence[m])){
+                    // for every row in factor
+                    for(int j=0; j<factors.get(i).probs.size(); j++){
+                        
+                    }
 
                     
                     
                 }
             }
         }
-        
-
-
-
 
 
 
