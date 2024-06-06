@@ -13,6 +13,7 @@ public class VariableElimination {
     private BayesianNetwork network;
     private String queryName;
     private String[] evidence;
+    private String[] irrelevant;
 
 
     public VariableElimination(String Query, String QueryValue, BayesianNetwork network, String[] evidence, String[] evidenceValues, ArrayList<String> hidden){
@@ -89,12 +90,13 @@ public class VariableElimination {
             //  Remove irrelevant nodes
             if(! irrelevant.isEmpty()){
                 for(int j=0; j< irrelevant.size(); j++){
-                    System.out.println(irrelevant.get(j));
                     allVarsNames = removeString(allVarsNames, irrelevant.get(j));
                 }
             }
-
         }
+        
+        // Set classes irrelevant variables to this one
+        this.irrelevant = irrelevant.toArray(new String[0]);
 
         return allVarsNames;
      }
