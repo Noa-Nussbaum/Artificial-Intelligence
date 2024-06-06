@@ -23,12 +23,13 @@ public class VariableElimination {
         this.evidence = evidence;
         ArrayList<NodeFactor> factors = new ArrayList<>();
         List<AlgNode> allNodes = new ArrayList<>(network.getNodesList().values());
+        whichVariables();
 
-
+        beginFactors();
         for(AlgNode node : allNodes){
             factors.add(node.getFactor());
         }
-        whichVariables();
+
         factors = NodeFactor.restrict(factors, evidence, evidenceValues);
 
     }
@@ -49,8 +50,13 @@ public class VariableElimination {
         return answer;
     }
 
+
+    public static boolean containsString(String[] array, String target) {
+        return Arrays.asList(array).contains(target);
+    }
+
 // Retrieve variables we need for algorithm
-    public String[] whichVariables(){
+    public void whichVariables(){
 
         // Retrieve all variable names in the network
         String[] allVarsNames = new String[this.network.getNodesList().size()];
@@ -65,10 +71,9 @@ public class VariableElimination {
 
             // Evidence 
             if(this.evidence.length > 0 && this.evidence != null){
-                for(String e : evidence){
-                    if(e.equals(allVarsNames[i])){
-                        continue;
-                    }
+                
+                if(containsString(evidence, allVarsNames[i])){
+                    continue;
                 }
             }
             // Actual query
@@ -85,6 +90,7 @@ public class VariableElimination {
             ArrayList<String> evidenceInArray = new ArrayList<>(Arrays.asList(evidence));
             ArrayList<AlgNode> passed = new ArrayList<>();
              if(network.BayesBall(network, allVarsNames[i], queryName, evidenceInArray, "", passed)){
+                // System.out.println("this"+allVarsNames[i]);
                 irrelevant.add(allVarsNames[i]);
              }  
             //  Remove irrelevant nodes
@@ -97,11 +103,20 @@ public class VariableElimination {
         
         // Set classes irrelevant variables to this one
         this.irrelevant = irrelevant.toArray(new String[0]);
-
-        return allVarsNames;
+        this.relevantVariables = allVarsNames;
+        // return allVarsNames;
      }
 
+    public ArrayList<NodeFactor> beginFactors(){
 
+        // Create collection of relevant nodes
+        ArrayList<NodeFactor> answer = new ArrayList<>();
+
+        for(int i =0; i<this.irrelevant.length; i++){
+            System.out.println(this.irrelevant[i]);
+        }
+        return answer;
+    }
 
 
 }
