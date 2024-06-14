@@ -15,18 +15,18 @@ public class QueryReadWrite {
         while (scanFile.hasNextLine()) {
             String line = scanFile.nextLine();
             if(line.startsWith("P")){
-                try{
+                // try{
                 results.add(processVariableEliminationQuery(line, network));
-            } catch (Exception e) {
-                results.add("0.11111,5,8");
-            }
+            // } catch (Exception e) {
+            //     results.add("0.11111,5,8");
+            // }
             }
             else {  // Remaining lines for Variable Elimination
-                try{
+                // try{
                 results.add(processBayesBallQuery(line, network));
-            } catch (Exception e) {
-                results.add("yes");
-            }
+            // } catch (Exception e) {
+            //     results.add("yes");
+            // }
         }
         }
 

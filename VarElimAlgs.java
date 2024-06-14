@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Hashtable;
+import java.util.Objects;
 
 public class VarElimAlgs {
 
@@ -24,8 +25,6 @@ public class VarElimAlgs {
 
     public VarElimAlgs(String Query, String QueryValue, BayesianNetwork network, String[] evidence,
             String[] evidenceValues, ArrayList<String> hidden) {
-        System.out.println("New run");
-        network.Print();
 
         this.network = network;
         this.queryName = Query;
@@ -37,21 +36,9 @@ public class VarElimAlgs {
         this.hiddens = hidden;
         this.evidenceVals = evidenceValues;
 
-        // for (int i = 0; i < network.getNodesList().size(); i++) {
-        //     String curr = network.getNodeNames().get(i);
-        //     AlgNode n = network.getNode(curr);
-
-        //     NodeFactor f = n.getFactor().copy();
-        //     this.factors.add(f);
-        // }
-
         whichVariables();
 
         this.factors = beginFactors();
-
-        // for(NodeFactor fac : this.factors){
-        //     System.out.println(fac.toString());
-        // }
 
         this.varElim();
 
@@ -82,6 +69,10 @@ public class VarElimAlgs {
 
 
     public String[] removeString(String[] original, String remove) {
+        // Make sure it's in the array
+        if(containsString(original, remove) == false){
+            return original;
+        }
         String[] answer = new String[original.length - 1];
         int index = 0;
         for (int i = 0; i < original.length; i++) {
@@ -185,8 +176,7 @@ public class VarElimAlgs {
 
         for (int i = 0; i < this.relevantVariables.length; i++) {
             // answer.add(this.network.getNode(relevantVariables[i]).getFactor().copy());
-
-            answer.add(this.network.getNode(relevantVariables[i]).getFactor());
+            answer.add(new NodeFactor(this.network.getNode(relevantVariables[i]).getFactor()));
         }
 
         this.factors = answer;
@@ -201,6 +191,7 @@ public class VarElimAlgs {
             NodeFactor fac = answer.get(i);
             for (int j = 0; j < fac.getVars().length; j++) {
                 if (containsString(evidence, fac.getVars()[j])) {
+                    // System.out.println("In");
                     if (fac.getVars().length == 1) {
                         answer.remove(i);
                         i = i - 1;
@@ -496,8 +487,83 @@ public class VarElimAlgs {
      *                      eliminated.
      * @param targetVarName The name of the variable to eliminate.
      */
-    public void eliminateVariable(int factorIndex, String targetVarName) {
+    // public void eliminateVariable(int factorIndex, String targetVarName) {
 
+    //     // Prepare new lists for the modified factor
+    //     ArrayList<Double> newProbabilities = new ArrayList<>();
+    //     ArrayList<String> newProbIndices = new ArrayList<>();
+    //     ArrayList<NodeVariable> newVariables = new ArrayList<>();
+    //     // Retrieve the factor based on index
+    //     NodeFactor targetFactor = this.factors.get(factorIndex);
+    //     ArrayList<Double> initialProbabilities = targetFactor.getProbabilities();
+    //     ArrayList<String> initialProbIndices = targetFactor.getVariableValues();
+    //     ArrayList<NodeVariable> initialVariables = targetFactor.getVariablesObjects();
+
+    //     // Exclude the target variable from the new variables list
+    //     for (NodeVariable variable : initialVariables) {
+    //         if (!variable.getName().equals(targetVarName)) {
+    //             newVariables.add(variable);
+    //         }
+    //     }
+
+    //     // Identify the index of the variable to be eliminated in the factor's variables
+    //     int varIndexToEliminate = 0;
+    //     for (int i = 0; i < initialVariables.size(); i++) {
+    //         if (initialVariables.get(i).getName().equals(targetVarName)) {
+    //             varIndexToEliminate = i;
+    //             break;
+    //         }
+    //     }
+
+        
+
+    //     // Elimination
+    //     while (!initialProbabilities.isEmpty()) {
+            
+    //         String pattern = buildRegex(initialProbIndices.get(0), varIndexToEliminate);
+    //         int[] indicesForElimination = findMatchingIndices(initialProbIndices, pattern);
+    //         // double sumProb = sumProbabilities(is_first, indicesForElimination, initialProbabilities);
+    //         // is_first = false;
+    //          // get sum probabilities:
+    //         //  boolean is_first = true;
+    //         boolean is_first = true;
+    //          double sumProb = 0;
+    //          for (int index : indicesForElimination){
+    //              if (is_first){  
+    //                 sumProb = initialProbabilities.get(index);
+    //                  is_first = false;
+    //              }
+    //              else {
+    //                 sumProb += initialProbabilities.get(index);
+    //                  this.additions++;
+    //              }
+    //          }
+
+    //         // Build new probability index string excluding the eliminated variable
+    //         String newProbIndex = buildNewProbIndex(initialProbIndices.get(0), varIndexToEliminate);
+    //         newProbabilities.add(sumProb);
+    //         newProbIndices.add(newProbIndex);
+
+    //         // Remove processed indices
+    //         removeProcessedEntries(indicesForElimination, initialProbabilities, initialProbIndices);
+    //     }
+
+    //     // Remove the original factor
+    //     this.factors.remove(factorIndex);
+
+    //     // Add new factor if it's not empty
+    //     if (newProbabilities.size() > 1) {
+
+    //         // Assume the NodeFactor class has appropriate setters or methods to add items
+    //         // to its lists
+
+    //         NodeFactor newFactor = new NodeFactor(newProbabilities, newVariables, newProbIndices);
+    //         this.factors.add(newFactor);
+    //     }
+    // }
+
+
+    public void eliminateVariable(int factorIndex, String targetVarName) {
         // Prepare new lists for the modified factor
         ArrayList<Double> newProbabilities = new ArrayList<>();
         ArrayList<String> newProbIndices = new ArrayList<>();
@@ -507,14 +573,14 @@ public class VarElimAlgs {
         ArrayList<Double> initialProbabilities = targetFactor.getProbabilities();
         ArrayList<String> initialProbIndices = targetFactor.getVariableValues();
         ArrayList<NodeVariable> initialVariables = targetFactor.getVariablesObjects();
-
+    
         // Exclude the target variable from the new variables list
         for (NodeVariable variable : initialVariables) {
             if (!variable.getName().equals(targetVarName)) {
                 newVariables.add(variable);
             }
         }
-
+    
         // Identify the index of the variable to be eliminated in the factor's variables
         int varIndexToEliminate = 0;
         for (int i = 0; i < initialVariables.size(); i++) {
@@ -523,50 +589,54 @@ public class VarElimAlgs {
                 break;
             }
         }
-
+    
         // Elimination
         while (!initialProbabilities.isEmpty()) {
             String pattern = buildRegex(initialProbIndices.get(0), varIndexToEliminate);
             int[] indicesForElimination = findMatchingIndices(initialProbIndices, pattern);
             double sumProb = sumProbabilities(indicesForElimination, initialProbabilities);
-
+    
             // Build new probability index string excluding the eliminated variable
             String newProbIndex = buildNewProbIndex(initialProbIndices.get(0), varIndexToEliminate);
             newProbabilities.add(sumProb);
             newProbIndices.add(newProbIndex);
-
+    
             // Remove processed indices
             removeProcessedEntries(indicesForElimination, initialProbabilities, initialProbIndices);
         }
-
+    
         // Remove the original factor
         this.factors.remove(factorIndex);
-
+    
         // Add new factor if it's not empty
         if (newProbabilities.size() > 1) {
-
-            // Assume the NodeFactor class has appropriate setters or methods to add items
-            // to its lists
-
             NodeFactor newFactor = new NodeFactor(newProbabilities, newVariables, newProbIndices);
             this.factors.add(newFactor);
         }
     }
 
+    private double sumProbabilities(int[] indicesForElimination, ArrayList<Double> probabilities) {
+        boolean is_first = true;
+        double sumProb = 0;
+        for (int index : indicesForElimination) {
+            if (is_first) {
+                sumProb = probabilities.get(index);
+                is_first = false;
+            } else {
+                sumProb += probabilities.get(index);
+                this.additions++;
+            }
+        }
+        return sumProb;
+    }
+    
+    
     private String buildRegex(String firstProbIndex, int varIndex) {
         String[] parts = firstProbIndex.split(",");
         parts[varIndex] = "(.*)";
         return String.join(",", parts);
     }
 
-    private double sumProbabilities(int[] indices, ArrayList<Double> probabilities) {
-        double sum = 0;
-        for (int index : indices) {
-            sum += probabilities.get(index);
-            this.additions++;
-        }
-        return sum;
-    }
 
     private String buildNewProbIndex(String probIndex, int varIndexToEliminate) {
         String[] parts = probIndex.split(",");
@@ -593,13 +663,16 @@ public class VarElimAlgs {
     // 2. Sum up all probabilities in the factor to get the denominator.
     // 3. The final answer is computed as the ratio of numerator to denominator.
     private String calculateFinalResult() {
+
         // Retrieve the last factor in the list
         ArrayList<Double> probabilities = this.factors.get(0).getProbabilities();
         ArrayList<String> probabilityIndexes = this.factors.get(0).getVariableValues();
 
         // Find the numerator using the index of the query value in the probability
-        // indexes        
+        // indexes   
+
         double numerator = probabilities.get(probabilityIndexes.indexOf(this.queryval));
+        
 
         // Calculate the denominator by summing all probability values
         double total = 0.0;
@@ -608,14 +681,11 @@ public class VarElimAlgs {
         }
 
         // Update the addition counter to reflect the operations performed
-        this.additions = this.additions + probabilities.size() - 1;
-
-        // Calculate the final result as the ratio of the numerator to the total
-        double answer = numerator / total;
+        this.additions = this.additions + probabilityIndexes.size() - 1;
         
         DecimalFormat d1 = new DecimalFormat("#.#####");
 
-        return d1.format(answer);
+        return d1.format(numerator/total);
     }
 
 
@@ -648,11 +718,98 @@ public class VarElimAlgs {
             String answer = holdAns + "," + this.additions + "," + this.multiplications;
             this.finalAnswer = answer;
         }
+        else{
+            // If the answer already exists
+            for(NodeFactor fac : this.factors){
+                // Find only relevant factors by checking number of variables
+                if(fac.getVars().length == this.evidence.length +1){
+                    // Check if all the variables are in it, including query name
+                    if(containsString(fac.getVars(), this.queryName)){
+                        String[] forChecking = Arrays.copyOf(evidence, evidence.length +1);
+                        forChecking[evidence.length] = this.queryName;
+
+                        if(EqualArrayOfString(fac.getVars(), forChecking)){
+                            this.factors.set(0, fac);
+                            System.out.println(this.factors.get(0).toString());
+                            String holdAns = calculateFinalResultIfEasy();
+                            String answer = holdAns + ",0,0";
+                            this.finalAnswer = answer;
+                            break;
+                        }
+                    }
+
+                }
+            }
+            
+            // ArrayList<Double> probabilities = this.factors.get(0).getProbabilities();
+            // ArrayList<String> probabilityIndexes = this.factors.get(0).getVariableValues();
+
+            // // Find the numerator using the index of the query value in the probability
+            // // indexes
+            // System.out.println(this.queryName + " " +this.queryval);
+            // for(String s : probabilityIndexes){
+            //     System.out.println("index: "+s);
+            // }        
+            // double numerator = probabilities.get(probabilityIndexes.indexOf(this.queryval));
+
+            // // Calculate the denominator by summing all probability values
+            // double total = 0.0;
+            // for (double prob : probabilities) {
+            //     total = total + prob;
+            // }
+
+            // // Update the addition counter to reflect the operations performed
+            // this.additions = this.additions + probabilityIndexes.size() - 1;
+            
+            // DecimalFormat d1 = new DecimalFormat("#.#####");
+
+            // this.finalAnswer = d1.format(numerator / total);
+        }
     }
 
-    public String finalAnswer() {
-        return this.finalAnswer;
+    public String calculateFinalResultIfEasy(){
+        
+        String[] forChecking = Arrays.copyOf(evidence, evidence.length +1);
+        forChecking[evidence.length] = this.queryName;
+
+        // Retrieve the last factor in the list
+        ArrayList<Double> probabilities = this.factors.get(0).getProbabilities();
+        ArrayList<String> probabilityIndexes = this.factors.get(0).getVariableValues();
+
+        // Find the numerator using the index of the query value in the probability
+        // indexes   
+        String index="";
+        int m =0;
+        for(int i=0; i<forChecking.length; i++){
+            if(forChecking[i].equals(this.queryName)){
+                index+=this.queryval+",";
+                System.out.println(index);
+            }else{
+                index+=evidenceVals[m]+",";
+                m++;
+            }
+        }
+        index = index.substring(0,index.length()-1);
+        System.out.println(index);
+        
+        double numerator = probabilities.get(probabilityIndexes.indexOf(index));
+    
+        return String.valueOf(numerator);
     }
+
+
+    public boolean EqualArrayOfString(String[] array1, String[] array2){
+        if(array1.length != array2.length){
+            return false;
+        }
+        for(int i=0; i<array1.length; i++){
+            if(!containsString(array1, array2[i])){
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     /**
      * Creates a combined index string representing a new row in a factor by merging
@@ -801,7 +958,7 @@ public class VarElimAlgs {
      * @return A list of variables that appear in both input lists.
      */
     private ArrayList<NodeVariable> findMutualVariables(ArrayList<NodeVariable> firstVariables,
-            ArrayList<NodeVariable> secondVariables) {
+        ArrayList<NodeVariable> secondVariables) {
         ArrayList<NodeVariable> answer = new ArrayList<>();
         ArrayList<String> secondVarNames = extractVariableNames(secondVariables);
 
@@ -811,6 +968,9 @@ public class VarElimAlgs {
             }
         }
         return answer;
+    }
+    public String finalAnswer() {
+        return this.finalAnswer;
     }
 
     /**

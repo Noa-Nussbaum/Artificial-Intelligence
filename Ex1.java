@@ -3,14 +3,14 @@ import java.util.Scanner;
 
 public class Ex1 {
 
-    static String inputFileName = "input.txt";
+    static String inputFileName = "src\\input8.txt";
     static File inputFile = new File(inputFileName);
 
     public static void main(String[] args) {
         try (Scanner scanFile = new Scanner(inputFile)) {
             // Retrieve XML file name from the first row of the input file
             String XMLFile = scanFile.nextLine();
-            BayesianNetwork network = XMLReaderUtil.XMLReader(XMLFile);
+            BayesianNetwork network = XMLReaderUtil.XMLReader("src\\"+XMLFile);
             // network.Print();
 
             // Retrieve queries and write results into the output file
