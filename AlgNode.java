@@ -22,13 +22,19 @@ public class AlgNode {
     }
 
     public NodeFactor getFactor(){
+        // NodeFactor newFactor = this.factor.copy();
         return this.factor;
+        // return newFactor;
     }
     public String getName(){
         return this.name;
     }
     public ArrayList<String> getValues(){
         return this.values;
+    }
+    public NodeVariable getNodeVariable(){
+        NodeVariable variable = new NodeVariable(this.values, this.name);
+        return variable;
     }
     
 
@@ -37,12 +43,17 @@ public class AlgNode {
 
     // Setters
     public void setChild(AlgNode child){
-        this.children.add(child);
+        if (!this.children.contains(child)) {
+            this.children.add(child);
+        }
     }
-
+    
     public void setParent(AlgNode parent){
-        this.parents.add(parent);
+        if (!this.parents.contains(parent)) {
+            this.parents.add(parent);
+        }
     }
+    
 
     public void setFactor(NodeFactor factor){
         this.factor = factor;
@@ -61,6 +72,7 @@ public class AlgNode {
         this.children = new ArrayList<>();
         this.parents = new ArrayList<>();
         this.values = new ArrayList<>();
+        this.factor = new NodeFactor();
     }
 
     public AlgNode(String name, ArrayList<String> values){
@@ -68,6 +80,8 @@ public class AlgNode {
         this.parents = new ArrayList<>();
         this.name = name;
         this.values = values;
+        this.factor = new NodeFactor();
+
     }
 
 
@@ -75,6 +89,7 @@ public class AlgNode {
     // Print function
     @Override
     public String toString(){
+
         StringBuilder builder = new StringBuilder();
         // Node name
         builder.append("Node ");

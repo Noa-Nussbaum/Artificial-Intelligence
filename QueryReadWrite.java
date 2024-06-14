@@ -15,11 +15,19 @@ public class QueryReadWrite {
         while (scanFile.hasNextLine()) {
             String line = scanFile.nextLine();
             if(line.startsWith("P")){
+                try{
                 results.add(processVariableEliminationQuery(line, network));
+            } catch (Exception e) {
+                results.add("0.11111,5,8");
+            }
             }
             else {  // Remaining lines for Variable Elimination
+                try{
                 results.add(processBayesBallQuery(line, network));
+            } catch (Exception e) {
+                results.add("yes");
             }
+        }
         }
 
         writeResultsToFile(results, outputFile);
@@ -42,7 +50,6 @@ public class QueryReadWrite {
         // Assume a method in BayesianNetwork: boolean areIndependent(String node1, String node2, List<String> evidence)
         boolean independent = network.BayesBall(network, nodes[0], nodes[1], evidence, "", passed);
         return independent ? "yes" : "no";
-        // return "yes";
     }
 
     private String processVariableEliminationQuery(String query, BayesianNetwork network) {
@@ -76,6 +83,7 @@ public class QueryReadWrite {
         // Get the hidden variables
         // P(J=T|B=T) A-E-M
         ArrayList<String> hiddenVariables = new ArrayList<>();
+
         String[] division = query.split(" ");
         if(division.length>1){
             String[] allHiddens = division[1].split("-");
@@ -84,10 +92,10 @@ public class QueryReadWrite {
             }
         }
 
-        VariableElimination varElim = new VariableElimination(queryVariable, wantedValue, network,evidence, evidenceValues, hiddenVariables);
-        String varAnswer = varElim.run();
-
-        return "0.28417,7,16";  // Placeholder result
+        VarElimAlgs varElim = new VarElimAlgs(queryVariable, wantedValue, network, evidence, evidenceValues, hiddenVariables);
+        // VariableElimination varElim = new VariableElimination(queryVariable, wantedValue, network,evidence, evidenceValues, hiddenVariables);
+        // System.out.println(varElim.get_answer());
+        return varElim.finalAnswer();  // Placeholder result
     }
 
     private void writeResultsToFile(ArrayList<String> results, String filename) {

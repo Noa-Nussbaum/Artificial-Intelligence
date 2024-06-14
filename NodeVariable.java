@@ -23,13 +23,26 @@ public class NodeVariable {
 
     // Constructors
     public NodeVariable(ArrayList<String> vals, String name){
-        this.values = vals;
+        if (vals == null || name == null) {
+            throw new IllegalArgumentException("Values and name cannot be null");
+        }
+        this.values = new ArrayList<>(vals);
         this.varName = name;
     }
 
     public NodeVariable(){
         this.values = new ArrayList<>();
-        // this.varName = null;
+        this.varName = null;
+    }
+    // Copy 
+    public NodeVariable(NodeVariable other){
+        String name = other.getName();
+        ArrayList<String> values = new ArrayList<>();
+        for(String s : other.values){
+            values.add(s);
+        }
+        this.setName(name);
+        this.setValues(values);
     }
 
     // Print

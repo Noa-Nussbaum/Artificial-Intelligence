@@ -7,8 +7,8 @@ import java.util.Queue;
 
 public class BayesianNetwork {
 
-    private Hashtable nodesList;
-    private ArrayList<String> nodesNames;
+    private final Hashtable nodesList;
+    private final ArrayList<String> nodesNames;
 
     // Getters
     public Hashtable getNodesList(){
@@ -17,8 +17,6 @@ public class BayesianNetwork {
     public ArrayList<String> getNodeNames(){
         return this.nodesNames;
     }
-
-
     public AlgNode getNode(String name){
         return (AlgNode) this.nodesList.get(name);
     }
@@ -30,6 +28,7 @@ public class BayesianNetwork {
         this.nodesNames = new ArrayList<String>();
     }
 
+
     // Node setter
     public void setNode(String name, AlgNode node){
         this.nodesList.put(name, node);
@@ -38,31 +37,71 @@ public class BayesianNetwork {
 
     // Print function
     @SuppressWarnings("unchecked")
-    public void print(){
+    public void Print(){
         nodesList.forEach((name, node) -> {
             System.out.println(node.toString());
         }
         );
     }
 
-    //  * This function is the algorithm Bayes-Ball
-    //  * we will split the algorithm to four cases:
-    //  * 1. the current node is given and came from child
-    //  * 2. the current node is given and came from parent
-    //  * 3. the current node is NOT given and came from child
-    //  * 4. the current node is NOT given and came from parent
+
+
+    // This is incorect but use to modify
+// public boolean BayesBall(BayesianNetwork network, String src, String destin, ArrayList<String> evidence, String prev, ArrayList<AlgNode> passed) {
+//     AlgNode source = network.getNode(src);
+//     AlgNode destination = network.getNode(destin);
+//     AlgNode previous = prev.isEmpty() ? null : network.getNode(prev);
+
+//     // Early exit if nodes don't exist
+//     if (source == null || destination == null) return true; 
+
+//     // Check if source is the destination
+//     if (source.equals(destination)) return false;
+
+//     // Check if the node has already been processed
+//     if (passed.contains(source)) {
+//         return true;
+//     }
+
+//     // Add the current node to passed
+//     passed.add(source);
+
+//     if (evidence.contains(source.getName())) {
+//         if (source.getChildren().contains(previous)) {
+//             return true;
+//         } else {
+//             return source.getParents().stream()
+//                          .noneMatch(parent -> !BayesBall(network, parent.getName(), destin, evidence, source.getName(), passed));
+//         }
+//     } else {
+//         boolean fromChild = source.getChildren().contains(previous) || previous == null;
+//         if (fromChild) {
+//             boolean parentCheck = source.getParents().stream()
+//                                      .noneMatch(parent -> !BayesBall(network, parent.getName(), destin, evidence, source.getName(), passed));
+//             boolean childrenCheck = source.getChildren().stream()
+//                                        .noneMatch(child -> !BayesBall(network, child.getName(), destin, evidence, source.getName(), passed));
+//             return parentCheck && childrenCheck;
+//         } else {
+//             return source.getChildren().stream()
+//                          .noneMatch(child -> !BayesBall(network, child.getName(), destin, evidence, source.getName(), passed));
+//         }
+//     }
+// }
+
+
 
 // If no path to the destination is active, return true (independent)
+// Improve this. for example - retrieve parents and kids at the beginning
 
-public static boolean BayesBall(BayesianNetwork network, String src, String destin, ArrayList<String> evidence, String prev, ArrayList<AlgNode> passed) {
+public boolean BayesBall(BayesianNetwork network, String src, String destin, ArrayList<String> evidence, String prev, ArrayList<AlgNode> passed) {
     // Retrieve source, destination, and previous nodes
     AlgNode source = network.getNode(src);
     AlgNode destination = network.getNode(destin);
     AlgNode previous = network.getNode(prev);
 
     // If the source is the destination or the nodes don't exist
-    if (network.getNode(source.getName()).equals(network.getNode(destination.getName()))) return false;
     if (source == null || destination == null) return true; 
+    if (source.getName().equals(destination.getName())) return false;
 
 
     //If the source is in the evidence

@@ -4,13 +4,22 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Node;
-
+import org.w3c.dom.NodeList;
 
 public class XMLReaderUtil {
 
+    public static String[] nodeListToStringArray(NodeList nodeList) {
+        String[] result = new String[nodeList.getLength()]; // Create an array of strings with the same length as the
+                                                            // NodeList
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node = nodeList.item(i); // Get the node at the current index
+            result[i] = node.getTextContent(); // Store the text content of the node in the array
+        }
+        return result; // Return the array of strings
+    }
 
-        // Read from the XML and create the net
-    public static BayesianNetwork XMLReader(String fileName){
+    // Read from the XML and create the net
+    public static BayesianNetwork XMLReader(String fileName) {
 
         BayesianNetwork network = new BayesianNetwork();
 
@@ -58,19 +67,24 @@ public class XMLReaderUtil {
                     String table = definitionElement.getElementsByTagName("TABLE").item(0).getTextContent();
                     ArrayList<Double> probabilities = new ArrayList<>();
                     String[] parts = table.split(" ");
-                    for(String m : parts){
+
+                    for (String m : parts) {
                         probabilities.add(Double.parseDouble(m));
                     }
+                    
                     // Add all relevant nodes to the factor
                     ArrayList<AlgNode> nodes = new ArrayList<AlgNode>();
-                    for(int j=0; j<currentNode.getParents().size(); j++){
+                    for (int j = 0; j < currentNode.getParents().size(); j++) {
                         nodes.add(currentNode.getParents().get(j));
                     }
+                    
                     nodes.add(currentNode);
+                    
                     // Initialize factor
                     NodeFactor factor = new NodeFactor(probabilities, nodes);
                     currentNode.setFactor(factor);
                     
+
                 }
             }
         } catch (Exception e) {
@@ -78,6 +92,5 @@ public class XMLReaderUtil {
         }
         return network;
     }
-    
 
 }
