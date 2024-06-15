@@ -3,7 +3,7 @@ import java.util.Scanner;
 
 public class Ex1 {
 
-    static String inputFileName = "src\\input8.txt";
+    static String inputFileName = "src\\input3.txt";
     static File inputFile = new File(inputFileName);
 
     public static void main(String[] args) {

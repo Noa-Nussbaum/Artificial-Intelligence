@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Hashtable;
-import java.util.Objects;
 
 public class VarElimAlgs {
 
@@ -25,7 +24,6 @@ public class VarElimAlgs {
 
     public VarElimAlgs(String Query, String QueryValue, BayesianNetwork network, String[] evidence,
             String[] evidenceValues, ArrayList<String> hidden) {
-
         this.network = network;
         this.queryName = Query;
         this.queryval = QueryValue;
@@ -187,21 +185,25 @@ public class VarElimAlgs {
             return answer;
         }
 
+        
+
         for (int i = 0; i < answer.size(); i++) {
             NodeFactor fac = answer.get(i);
-            for (int j = 0; j < fac.getVars().length; j++) {
-                if (containsString(evidence, fac.getVars()[j])) {
-                    // System.out.println("In");
-                    if (fac.getVars().length == 1) {
-                        answer.remove(i);
-                        i = i - 1;
-                        break;
-                    } else {
-                        int indexOfEvidence = findIndex(evidence, fac.getVars()[j]);
-                        NodeFactor newFac = restrictTrial(fac, this.evidenceVals[indexOfEvidence], fac.getVariablesObjects().get(j));
-                        answer.set(i, newFac);
+            for(String s : fac.getVars()){
+                fac = answer.get(i);
+                    if (containsString(evidence, s)) {
+                        if (fac.getVars().length == 1) {
+                            answer.remove(i);
+                            i = i - 1;
+                            break;
+                        } else {
+                            int indexOfEvidence = findIndex(evidence, s);
+                            int indexOfVariable = findIndex(fac.getVars(), s);
+                            NodeFactor newFac = restrictTrial(fac, this.evidenceVals[indexOfEvidence], fac.getVariablesObjects().get(indexOfVariable));
+                            answer.set(i, newFac);
+                        }
                     }
-                }
+               
             }
         }
 
@@ -264,10 +266,12 @@ public class VarElimAlgs {
     //     return f_refactor;
     // }
 
+
     public NodeFactor restrictTrial(NodeFactor factor, String value, NodeVariable variable){
         NodeFactor answer = new NodeFactor(factor);
 
         ArrayList<String> list = new ArrayList<>(Arrays.asList(factor.getVars()));
+
         int index = list.indexOf(variable.getName()); 
 
         ArrayList<String> indexes = new ArrayList<>();
@@ -309,6 +313,13 @@ public class VarElimAlgs {
         answer.setVariableValues(indexesFinal);
         answer.setProbabilities(probs);
         answer.setVariables(vars);
+
+        // for(int i=0; i<answer.getVars().length; i++){
+        //     if(containsString(evidence, answer.getVars()[i])){
+        //         int indexOfEvidence = findIndex(evidence, answer.getVars()[i]);
+        //         answer = restrictTrial(answer,this.evidenceVals[indexOfEvidence], answer.getVariablesObjects().get(i));
+        //     }
+        // }
 
         return answer;
 
@@ -664,13 +675,13 @@ public class VarElimAlgs {
     // 3. The final answer is computed as the ratio of numerator to denominator.
     private String calculateFinalResult() {
 
+
         // Retrieve the last factor in the list
         ArrayList<Double> probabilities = this.factors.get(0).getProbabilities();
         ArrayList<String> probabilityIndexes = this.factors.get(0).getVariableValues();
 
         // Find the numerator using the index of the query value in the probability
         // indexes   
-
         double numerator = probabilities.get(probabilityIndexes.indexOf(this.queryval));
         
 
@@ -705,7 +716,6 @@ public class VarElimAlgs {
                 } else {
                     int[] inds = findTwoSmallestFactors(list);
                     this.join(next, inds[0], inds[1]);
-                    // System.out.println("Smallest: " + this.factors.get(inds[0]));
                 }
 
             }
@@ -730,7 +740,6 @@ public class VarElimAlgs {
 
                         if(EqualArrayOfString(fac.getVars(), forChecking)){
                             this.factors.set(0, fac);
-                            System.out.println(this.factors.get(0).toString());
                             String holdAns = calculateFinalResultIfEasy();
                             String answer = holdAns + ",0,0";
                             this.finalAnswer = answer;
@@ -783,14 +792,12 @@ public class VarElimAlgs {
         for(int i=0; i<forChecking.length; i++){
             if(forChecking[i].equals(this.queryName)){
                 index+=this.queryval+",";
-                System.out.println(index);
             }else{
                 index+=evidenceVals[m]+",";
                 m++;
             }
         }
         index = index.substring(0,index.length()-1);
-        System.out.println(index);
         
         double numerator = probabilities.get(probabilityIndexes.indexOf(index));
     
