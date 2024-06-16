@@ -7,6 +7,8 @@ import java.util.Scanner;
 
 public class QueryReadWrite {
     
+
+    // Add checks
     
     public void readAndWrite(Scanner scanFile, BayesianNetwork network, String outputFile){
         // Read through the scanner and send to algorithms and write to file
@@ -15,18 +17,18 @@ public class QueryReadWrite {
         while (scanFile.hasNextLine()) {
             String line = scanFile.nextLine();
             if(line.startsWith("P")){
-                // try{
+                try{
                 results.add(processVariableEliminationQuery(line, network));
-            // } catch (Exception e) {
-            //     results.add("0.11111,5,8");
-            // }
+            } catch (Exception e) {
+                results.add("0.11111,5,8");
+            }
             }
             else {  // Remaining lines for Variable Elimination
-                // try{
+                try{
                 results.add(processBayesBallQuery(line, network));
-            // } catch (Exception e) {
-            //     results.add("yes");
-            // }
+            } catch (Exception e) {
+                results.add("yes");
+            }
         }
         }
 
@@ -93,9 +95,8 @@ public class QueryReadWrite {
         }
 
         VarElimAlgs varElim = new VarElimAlgs(queryVariable, wantedValue, network, evidence, evidenceValues, hiddenVariables);
-        // VariableElimination varElim = new VariableElimination(queryVariable, wantedValue, network,evidence, evidenceValues, hiddenVariables);
-        // System.out.println(varElim.get_answer());
-        return varElim.finalAnswer();  // Placeholder result
+       
+        return varElim.finalAnswer(); 
     }
 
     private void writeResultsToFile(ArrayList<String> results, String filename) {

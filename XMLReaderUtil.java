@@ -71,19 +71,18 @@ public class XMLReaderUtil {
                     for (String m : parts) {
                         probabilities.add(Double.parseDouble(m));
                     }
-                    
+
                     // Add all relevant nodes to the factor
                     ArrayList<AlgNode> nodes = new ArrayList<AlgNode>();
                     for (int j = 0; j < currentNode.getParents().size(); j++) {
                         nodes.add(currentNode.getParents().get(j));
                     }
-                    
+
                     nodes.add(currentNode);
-                    
+
                     // Initialize factor
                     NodeFactor factor = new NodeFactor(probabilities, nodes);
                     currentNode.setFactor(factor);
-                    
 
                 }
             }

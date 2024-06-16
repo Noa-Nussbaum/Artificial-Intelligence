@@ -2,8 +2,10 @@ import java.util.ArrayList;
 
 public class NodeVariable {
 
+    // Variable name and values
     private ArrayList<String> values;
     private String varName;
+
 
     // Getters
     public ArrayList<String> getValues(){
@@ -29,7 +31,6 @@ public class NodeVariable {
         this.values = new ArrayList<>(vals);
         this.varName = name;
     }
-
     public NodeVariable(){
         this.values = new ArrayList<>();
         this.varName = null;

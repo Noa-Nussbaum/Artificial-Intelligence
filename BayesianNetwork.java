@@ -4,189 +4,195 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Queue;
 
-
 public class BayesianNetwork {
 
-    private final Hashtable nodesList;
+    // Hashtable with each node name and node
+    private final Hashtable<String, AlgNode> nodesList;
+    
+    // List of names for retrieval
     private final ArrayList<String> nodesNames;
 
     // Getters
-    public Hashtable getNodesList(){
+    public Hashtable<String, AlgNode> getNodesList() {
         return this.nodesList;
     }
-    public ArrayList<String> getNodeNames(){
+
+    public ArrayList<String> getNodeNames() {
         return this.nodesNames;
     }
-    public AlgNode getNode(String name){
+
+    public AlgNode getNode(String name) {
         return (AlgNode) this.nodesList.get(name);
     }
 
-    
     // Constructor
-    public BayesianNetwork(){
+    public BayesianNetwork() {
         this.nodesList = new Hashtable<String, AlgNode>();
         this.nodesNames = new ArrayList<String>();
     }
 
-
     // Node setter
-    public void setNode(String name, AlgNode node){
+    public void setNode(String name, AlgNode node) {
         this.nodesList.put(name, node);
         this.nodesNames.add(name);
     }
 
     // Print function
-    @SuppressWarnings("unchecked")
-    public void Print(){
+    public void Print() {
         nodesList.forEach((name, node) -> {
             System.out.println(node.toString());
-        }
-        );
+        });
     }
 
+    /**
+     * Implements the Bayes Ball algorithm to determine the independence of two
+     * nodes given evidence.
+     * This method recursively checks if there is a valid path from the source to
+     * the destination node,
+     * considering the provided evidence that may block certain paths. The function
+     * handles direct checks
+     * and also recurses through children and parents as needed based on the
+     * direction of the traversal.
+     * 
+     * @param network  The Bayesian network instance containing all nodes.
+     * @param src      The name of the source node from which independence is being
+     *                 tested.
+     * @param destin   The name of the destination node to which independence is
+     *                 being tested.
+     * @param evidence A list of nodes that are observed (evidence nodes).
+     * @param prev     The previously visited node name, used to determine the
+     *                 direction of traversal.
+     * @param passed   A list of nodes already visited in this path, used to prevent
+     *                 cycles.
+     * @return true if the nodes are independent given the evidence, false
+     *         otherwise.
+     */
+    public boolean BayesBall(BayesianNetwork network, String src, String destin, ArrayList<String> evidence,
+            String prev, ArrayList<AlgNode> visited) {
 
+        // Retrieve source, destination, and previous nodes
+        AlgNode source = network.getNode(src);
+        // Node we are trying to get to
+        AlgNode destination = network.getNode(destin);
+        // The last node we visited
+        AlgNode previous = network.getNode(prev);
 
-    // This is incorect but use to modify
-// public boolean BayesBall(BayesianNetwork network, String src, String destin, ArrayList<String> evidence, String prev, ArrayList<AlgNode> passed) {
-//     AlgNode source = network.getNode(src);
-//     AlgNode destination = network.getNode(destin);
-//     AlgNode previous = prev.isEmpty() ? null : network.getNode(prev);
-
-//     // Early exit if nodes don't exist
-//     if (source == null || destination == null) return true; 
-
-//     // Check if source is the destination
-//     if (source.equals(destination)) return false;
-
-//     // Check if the node has already been processed
-//     if (passed.contains(source)) {
-//         return true;
-//     }
-
-//     // Add the current node to passed
-//     passed.add(source);
-
-//     if (evidence.contains(source.getName())) {
-//         if (source.getChildren().contains(previous)) {
-//             return true;
-//         } else {
-//             return source.getParents().stream()
-//                          .noneMatch(parent -> !BayesBall(network, parent.getName(), destin, evidence, source.getName(), passed));
-//         }
-//     } else {
-//         boolean fromChild = source.getChildren().contains(previous) || previous == null;
-//         if (fromChild) {
-//             boolean parentCheck = source.getParents().stream()
-//                                      .noneMatch(parent -> !BayesBall(network, parent.getName(), destin, evidence, source.getName(), passed));
-//             boolean childrenCheck = source.getChildren().stream()
-//                                        .noneMatch(child -> !BayesBall(network, child.getName(), destin, evidence, source.getName(), passed));
-//             return parentCheck && childrenCheck;
-//         } else {
-//             return source.getChildren().stream()
-//                          .noneMatch(child -> !BayesBall(network, child.getName(), destin, evidence, source.getName(), passed));
-//         }
-//     }
-// }
-
-
-
-// If no path to the destination is active, return true (independent)
-// Improve this. for example - retrieve parents and kids at the beginning
-
-public boolean BayesBall(BayesianNetwork network, String src, String destin, ArrayList<String> evidence, String prev, ArrayList<AlgNode> passed) {
-    // Retrieve source, destination, and previous nodes
-    AlgNode source = network.getNode(src);
-    AlgNode destination = network.getNode(destin);
-    AlgNode previous = network.getNode(prev);
-
-    // If the source is the destination or the nodes don't exist
-    if (source == null || destination == null) return true; 
-    if (source.getName().equals(destination.getName())) return false;
-
-
-    //If the source is in the evidence
-    if (evidence.contains(source.getName())) {
-        // If it came from child
-        if (source.getChildren().contains(previous)) {
+        // If the source is the destination or the nodes don't exist
+        if (source == null || destination == null)
             return true;
-        }
+        // If the source is the destination
+        if (source.getName().equals(destination.getName()))
+            return false;
 
-        //If it came from a parent
-        else {
-            for (int i = 0; i < source.getParents().size(); i++) {
-                if (!passed.contains(source.getParents().get(i))) {
-                    passed.add(source);
-                    if (!BayesBall(network, source.getParents().get(i).getName(), destination.getName(), evidence, source.getName(), passed))
-                        return false;
-                }
+        // If the source is in the evidence
+        if (evidence.contains(source.getName())) {
+            // If it came from a child
+            if (source.getChildren().contains(previous)) {
+                return true;
             }
-            return true;
-        }
-    }
 
-    //If the source is not in the evidence
-    else {
-        //If it came from a child
-        if (source.getChildren().contains(previous) || previous == (null)) {
-            for (int i = 0; i < source.getParents().size(); i++) {
-                if (!passed.contains(source.getParents().get(i))) {
-                    passed.add(source);
-                    if (!BayesBall(network, source.getParents().get(i).getName(), destination.getName(), evidence, source.getName(), passed))
-                        return false;
-                }
-            }
-            for (int i = 0; i < source.getChildren().size(); i++) {
-                if (!passed.contains(source.getChildren().get(i))) {
-                    passed.add(source);
-                    if (!BayesBall(network, source.getChildren().get(i).getName(), destination.getName(), evidence, source.getName(), passed))
-                        return false;
-                }
-            }
-            return true;
-        }
-
-        //If it came from a parent
-        else {
-            for (int i = 0; i < source.getChildren().size(); i++) {
-                if (!passed.contains(source.getChildren().get(i))) {
-                    if (!BayesBall(network, source.getChildren().get(i).getName(), destination.getName(), evidence, source.getName(), passed)){
-                        return false;
+            // If it came from a parent
+            else {
+                for (int i = 0; i < source.getParents().size(); i++) {
+                    if (!visited.contains(source.getParents().get(i))) {
+                        visited.add(source);
+                        // Recursively check
+                        if (!BayesBall(network, source.getParents().get(i).getName(), destination.getName(), evidence,
+                                source.getName(), visited))
+                            return false;
                     }
                 }
-
+                return true;
             }
-            return true;
+        }
+
+        // If the source is not in the evidence
+        else {
+            // If it came from a child
+            if (source.getChildren().contains(previous) || previous == (null)) {
+                for (int i = 0; i < source.getParents().size(); i++) {
+                    if (!visited.contains(source.getParents().get(i))) {
+                        visited.add(source);
+                        // Recursively check
+
+                        if (!BayesBall(network, source.getParents().get(i).getName(), destination.getName(), evidence,
+                                source.getName(), visited))
+                            return false;
+                    }
+                }
+                for (int i = 0; i < source.getChildren().size(); i++) {
+                    if (!visited.contains(source.getChildren().get(i))) {
+                        visited.add(source);
+                        // Recursively check
+
+                        if (!BayesBall(network, source.getChildren().get(i).getName(), destination.getName(), evidence,
+                                source.getName(), visited))
+                            return false;
+                    }
+                }
+                return true;
+            }
+
+            // If it came from a parent
+            else {
+                for (int i = 0; i < source.getChildren().size(); i++) {
+                    if (!visited.contains(source.getChildren().get(i))) {
+                        // Recursively check
+
+                        if (!BayesBall(network, source.getChildren().get(i).getName(), destination.getName(), evidence,
+                                source.getName(), visited)) {
+                            return false;
+                        }
+                    }
+
+                }
+                return true;
+            }
+
         }
 
     }
 
-}
-
-
-    public boolean ancestor(String[] evidence, String varName, String query){
+    /**
+     * Determines if the specified node is an ancestor of the given query node or is
+     * part of the evidence.
+     * This method uses a breadth-first search strategy to explore the node's
+     * descendants until the target
+     * node or any evidence node is found.
+     * 
+     * @param evidence Array of evidence node names.
+     * @param varName  The name of the starting node to check for ancestry.
+     * @param query    The target node name to check if it is a descendant of the
+     *                 starting node.
+     * @return true if the starting node is an ancestor of the target node or is
+     *         part of the evidence, false otherwise.
+     */
+    public boolean ancestor(String[] evidence, String varName, String query) {
         // Is name the ancestor of query or any of the evidence?
 
         Queue<AlgNode> nextNodes = new LinkedList<>();
         AlgNode firstNode = (AlgNode) this.getNode(varName);
         nextNodes.add(firstNode);
 
-        while (!nextNodes.isEmpty()){
+        while (!nextNodes.isEmpty()) {
 
             AlgNode curr_node = nextNodes.remove();
             String name = curr_node.getName();
-            ArrayList<String> evidenceVars=new ArrayList<>();
+            ArrayList<String> evidenceVars = new ArrayList<>();
 
-            if(evidence != null) {
+            if (evidence != null) {
                 evidenceVars = new ArrayList<>(Arrays.asList(evidence));
             }
 
             // Check if the node is in the evidence or if it's the query
-            if(name.equals(query) || evidenceVars.contains(name)){
+            if (name.equals(query) || evidenceVars.contains(name)) {
                 return true;
             }
 
-            else if(!curr_node.getChildren().isEmpty()){
-                for(AlgNode kid: curr_node.getChildren()){nextNodes.add(kid);}
+            else if (!curr_node.getChildren().isEmpty()) {
+                for (AlgNode kid : curr_node.getChildren()) {
+                    nextNodes.add(kid);
+                }
             }
         }
         return false;
