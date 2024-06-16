@@ -14,7 +14,7 @@ public class Ex1 {
 
             // Retrieve queries and write results into the output file
             QueryReadWrite queryReadWrite = new QueryReadWrite();
-            queryReadWrite.readAndWrite(scanFile, network, "output.txt");
+            queryReadWrite.readAndWrite(XMLFile,scanFile, network, "output.txt");
 
         } catch (FileNotFoundException e) {
             System.out.println("File reading error:");

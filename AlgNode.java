@@ -3,6 +3,7 @@ import java.util.ArrayList;
 public class AlgNode {
 
     public static final Object ELEMENT_NODE = null;
+    
     // Each Node has children and parents and a correlating factor
     private ArrayList<AlgNode> children;
     private ArrayList<AlgNode> parents;

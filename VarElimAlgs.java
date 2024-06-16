@@ -481,11 +481,11 @@ public class VarElimAlgs {
         while (!initialProbabilities.isEmpty()) {
             String pattern = buildRegex(initialProbIndices.get(0), varIndexToEliminate);
             int[] indicesForElimination = findMatchingIndices(initialProbIndices, pattern);
-            double sumProb = sumProbabilities(indicesForElimination, initialProbabilities);
+            double sumOfProbs = sumProbabilities(indicesForElimination, initialProbabilities);
 
             // Build new probability index string excluding the eliminated variable
             String newProbIndex = buildNewProbIndex(initialProbIndices.get(0), varIndexToEliminate);
-            newProbabilities.add(sumProb);
+            newProbabilities.add(sumOfProbs);
             newProbIndices.add(newProbIndex);
 
             // Remove processed indices
