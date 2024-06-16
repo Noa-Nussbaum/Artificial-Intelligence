@@ -1,2 +1,0 @@
-alarm_net.xml
-P(A=T|E=T,B=T) J-M
