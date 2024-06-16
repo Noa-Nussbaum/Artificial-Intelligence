@@ -47,3 +47,4 @@ To run this project, ensure you have the following setup:
 - Java JDK 8 or newer installed and properly set up.
 - Clone this repository to your local machine.
 - Compile and run `Ex1.java` with the path to your XML configuration and query input files.
+- Add the relevant XML file and input.txt file into the same folder as the project.
